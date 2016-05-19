@@ -41,7 +41,7 @@ def upload():
             		        elif '.0' in str(array[1][j]) and len(str(array[1][j])[:-2]) == 10:
             		            htmlcode += HTML.table([[str(array[0][j])],[str("(" + str(array[1][j])[0:3] + ") " + str(array[1][j])[3:6] + "-" + str(array[1][j])[6:-2])]],border=0,style=(styling))
             		        else:
-            		            htmlcode += HTML.table([[str(array[0][j])],[str(array[1][j])]],border=0,style=(styling))
+            		            htmlcode += HTML.table([[str(array[0][j])],[str(array[1][j]).strip()]],border=0,style=(styling))
             		    f = open('/' + str(i) + '.html', 'w')
             		    f.write(htmlcode)
             		    f.close()

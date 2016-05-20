@@ -18,7 +18,9 @@ def upload():
             extension = filename.split(".")[1]
             content = request.files['excel'].read()
             numbers = request.form.getlist('accounts')
-            accountlist = numbers[0].strip().splitlines()
+            accountlist = numbers[0].splitlines()
+            striped_accounts = [i.strip() for i in accountlist]
+            accountlist = striped_accounts
             styling = 'display: inline; page-break-before: auto; padding-bottom: 50%; font-family: Calibri; font-size: 8.76;'
             wb = pyexcel.get_sheet(file_type=extension, file_content=content)
             filestozip = []

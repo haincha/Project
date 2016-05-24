@@ -2,11 +2,10 @@ import sys
 import os
 from flask import Flask, request, render_template, jsonify, make_response, send_file
 import pyexcel
-import pyexcel.ext.xlsx
-import pyexcel.ext.xls
 import HTML
 import pdfkit
 import zipfile
+import datetime
 
 app = Flask(__name__)
 
@@ -33,15 +32,20 @@ def upload():
             		    array = [wb.row[0],wb.row[i]]
             		    filestozip.append(str(wbname[0,0]).strip())
             		    for j in range(0,len(array[0])):
-            		        if '.0' in str(array[1][j]) and ("SSN" in str(array[0][j]) or "TAX" in str(array[0][j])):
-            		            if len(str(array[1][j])[:-2]) == 8:
-            		                htmlcode += HTML.table([[str(array[0][j])],[str('XXX-XX-X' + str(array[1][j])[5:-2])]],border=0,style=(styling))
+            		        if ("SSN" in str(array[0][j]) or "TAX" in str(array[0][j])) and (len(str(array[0][j])) != "0" or len(str(array[0][j])) != "1"):
+            		            if len(str(array[1][j])) == 8:
+            		                htmlcode += HTML.table([[str(array[0][j])],[str('XXX-XX-X' + str(array[1][j])[5:])]],border=0,style=(styling))
+            		            elif len(str(array[1][j])) == 0 or len(str(array[1][j])) == 1:
+            		                htmlcode += HTML.table([[str(array[0][j])],[str(array[1][j]).strip()]],border=0,style=(styling))
             		            else:
-            		                htmlcode += HTML.table([[str(array[0][j])],[str('XXX-XX-X' + str(array[1][j])[6:-2])]],border=0,style=(styling))
-            		        elif '.0' in str(array[1][j]) and len(str(array[1][j])[:-2]) == 9:
-            		            htmlcode += HTML.table([[str(array[0][j])],[str(str(array[1][j])[0:5] + "-" + str(array[1][j])[5:-2])]],border=0,style=(styling))
-            		        elif '.0' in str(array[1][j]) and len(str(array[1][j])[:-2]) == 10:
-            		            htmlcode += HTML.table([[str(array[0][j])],[str("(" + str(array[1][j])[0:3] + ") " + str(array[1][j])[3:6] + "-" + str(array[1][j])[6:-2])]],border=0,style=(styling))
+            		                htmlcode += HTML.table([[str(array[0][j])],[str('XXX-XX-X' + str(array[1][j])[6:])]],border=0,style=(styling))
+            		        elif len(str(array[1][j])) == 9:
+            		            htmlcode += HTML.table([[str(array[0][j])],[str(str(array[1][j])[0:5] + "-" + str(array[1][j])[5:])]],border=0,style=(styling))
+            		        elif len(str(array[1][j])) == 10:
+            		            if "PH" in str(array[0][j]):
+            		                htmlcode += HTML.table([[str(array[0][j])],[str("(" + str(array[1][j])[0:3] + ") " + str(array[1][j])[3:6] + "-" + str(array[1][j])[6:])]],border=0,style=(styling))
+            		            else:
+            		                htmlcode += HTML.table([[str(array[0][j])],[str(array[1][j]).strip()]],border=0,style=(styling))
             		        else:
             		            htmlcode += HTML.table([[str(array[0][j])],[str(array[1][j]).strip()]],border=0,style=(styling))
             		    f = open('/' + str(i) + '.html', 'w')
